@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite no soporta enums en Prisma: Role y OrderStatus se modelan como String.
+// Valores válidos — Role: USER | ADMIN · OrderStatus: PENDING | PAID | SHIPPED | DELIVERED | CANCELLED
+// · NotificationType: order_update | security | promo | system
+// (tipados como unions en types/index.ts)
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String    @default("USER")
+
+  // Perfil
+  phone     String?
+  bio       String?
+  birthdate DateTime?
+  address   Address?
+
+  // Seguridad
+  loginAttempts     Int       @default(0)
+  lockedUntil       DateTime?
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+  passwordChangedAt DateTime?
+  twoFactorEnabled  Boolean   @default(false)
+
+  // Preferencias de notificación
+  notifyOrders     Boolean @default(true)
+  notifyPromos     Boolean @default(true)
+  notifyNewsletter Boolean @default(false)
+
+  orders        Order[]
+  notifications Notification[]
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  street     String?
+  city       String?
+  postalCode String?
+  country    String   @default("España")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // order_update | security | promo | system
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product         String   @default("ZMA 120caps")
+  quantity        Int      @default(1)
+  total           Float
+  status          String   @default("PENDING")
+  trackingCode    String?
+  shippingAddress String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+}
+
+// Rate limiting en base de datos (fallback al in-memory)
+model RateLimit {
+  id         String   @id @default(cuid())
+  identifier String   @unique // IP o userId
+  count      Int      @default(0)
+  resetAt    DateTime
+  createdAt  DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
