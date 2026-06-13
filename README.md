@@ -6,7 +6,6 @@
 
 **Full-Stack · Next.js 14 · TypeScript · Prisma · NextAuth · Framer Motion**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/houdr91/BODYATHLON-ZMA)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
@@ -94,7 +93,6 @@ Bodyathlon ZMA es una **plataforma de e-commerce completa** construida desde cer
 | i18n | next-intl |
 | Iconos | Lucide React |
 | Fuentes | Inter + Bebas Neue (Google Fonts) |
-| Deploy | Vercel |
 
 ---
 
@@ -173,36 +171,6 @@ Para explorar el dashboard y todas las funcionalidades del área privada, puedes
 
 ---
 
-## 🌍 Deploy en Vercel
-
-### 1. Conectar repositorio
-1. Ve a [vercel.com](https://vercel.com) e inicia sesión
-2. Haz click en **"Add New Project"**
-3. Importa el repositorio `houdr91/BODYATHLON-ZMA`
-
-### 2. Base de datos de producción
-Para producción necesitas una base de datos PostgreSQL. Opciones gratuitas:
-- [Neon](https://neon.tech) — PostgreSQL serverless (plan gratuito generoso)
-- [Supabase](https://supabase.com) — PostgreSQL + extras (plan gratuito)
-
-> Recuerda cambiar el `provider` del datasource en `prisma/schema.prisma` de `sqlite` a `postgresql` antes del deploy en producción.
-
-### 3. Variables de entorno en Vercel
-En **Settings → Environment Variables**, añade:
-
-| Variable | Valor |
-|----------|-------|
-| `DATABASE_URL` | URL de PostgreSQL de Neon/Supabase |
-| `NEXTAUTH_SECRET` | Secret generado con `openssl rand -base64 32` (uno NUEVO, diferente al de dev) |
-| `AUTH_SECRET` | El mismo valor que `NEXTAUTH_SECRET` |
-| `NEXTAUTH_URL` | `https://tu-proyecto.vercel.app` |
-| `NODE_ENV` | `production` |
-
-### 4. Deploy
-Vercel detecta automáticamente que es un proyecto Next.js. El deploy es automático en cada push a `main`.
-
----
-
 ## 📁 Estructura del proyecto
 
 ```
@@ -243,7 +211,7 @@ Este proyecto está configurado para ser seguro en un repositorio público:
 
 - ✅ `.env.local` está en `.gitignore` — nunca se sube a GitHub
 - ✅ `.env.example` documenta las variables necesarias sin valores reales
-- ✅ Los secrets van en **Vercel Environment Variables** (cifrados)
+- ✅ Los secrets van en variables de entorno seguras del entorno de despliegue — nunca en el código
 - ✅ No hay API keys ni contraseñas hardcodeadas en el código fuente
 
 Si encuentras alguna vulnerabilidad de seguridad, por favor abre un issue.
@@ -260,6 +228,6 @@ MIT License — libre para usar como referencia o base para proyectos personales
 
 **Construido con ❤️ como proyecto de portfolio**
 
-[Ver demo en Vercel](https://bodyathlon-zma.vercel.app) · [Repositorio](https://github.com/houdr91/BODYATHLON-ZMA)
+[Repositorio](https://github.com/houdr91/BODYATHLON-ZMA)
 
 </div>
